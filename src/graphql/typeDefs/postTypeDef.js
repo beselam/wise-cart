@@ -4,10 +4,11 @@ export default gql`
   extend type Query {
     getAllPosts: [Post]
     getPostByPageAndLimit(page: Int, limit: Int): PostPaginator!
+    getAuthenticatedUserPost(page: Int, limit: Int): PostPaginator!
   }
 
   extend type Mutation {
-    createNewPost(newPost: NewPost!): Post! @isAuth
+    createNewPost(newPost: NewPost!): Post!
     updatePost(post: postUpdate): Post! @isAuth
     deletePost(id: ID): DeleteNotification! @isAuth
   }
@@ -15,6 +16,7 @@ export default gql`
   input NewPost {
     title: String!
     content: String!
+    category: String!
     featuredImage: Upload
   }
 
@@ -22,7 +24,8 @@ export default gql`
     id: ID!
     title: String
     content: String
-    featuredImage: String
+    category: String
+    featuredImage: [String]
     createdAt: String
     updatedAt: String
   }
@@ -51,7 +54,8 @@ export default gql`
     id: ID
     title: String!
     content: String!
-    featuredImage: String
+    category: String!
+    featuredImage: [String]
     createdAt: String
     updatedAt: String
     author: User!

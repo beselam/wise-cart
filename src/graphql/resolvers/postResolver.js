@@ -3,7 +3,7 @@ import { createWriteStream, mkdir } from "fs";
 import shortid from "shortid";
 import { ApolloError } from "apollo-server-errors";
 import { NewPostRules } from "../../validators/postValidator.js";
-
+import { GraphQLUpload } from "apollo-server-express";
 const PostLabels = {
   docs: "posts",
   limit: "perPage",
@@ -21,17 +21,23 @@ const storeUpload = async ({ stream, filename, mimetype }) => {
   let path = `src/uploads/${id}-${filename}`;
   await stream.pipe(createWriteStream(path));
   path = `http://localhost:7000/${path}`;
-  return { filename, id, mimetype, path };
+  return path;
 };
 
 const processUpload = async (upload) => {
-  const { createReadStream, filename, mimetype } = await upload;
-  const stream = createReadStream();
-  const file = await storeUpload({ stream, filename, mimetype });
-  return file;
+  const imageList = [];
+  for (image in upload) {
+    const { createReadStream, filename, mimetype } = await image;
+    const stream = await createReadStream();
+    const file = await storeUpload({ stream, filename, mimetype });
+    imageList.push(file);
+  }
+
+  return imageList;
 };
 
 export default {
+  Upload: GraphQLUpload,
   Query: {
     getAllPosts: async (_, args, { isAuth }) => {
       console.log("dd", isAuth);
@@ -59,9 +65,12 @@ export default {
     createNewPost: async (_, { newPost }, { user }) => {
       try {
         const { title, content, featuredImage } = newPost;
+        console.log(newPost);
+        console.log(featuredImage);
         await NewPostRules.validate({ title, content }, { abortEarly: false });
-        const upload = await processUpload(featuredImage);
-        newPost.featuredImage = await upload.path;
+        // const upload = await processUpload(featuredImage);
+        // newPost.featuredImage = upload;
+        newPost.featuredImage = "www.gooogle.com";
         const post = new PostModel({ ...newPost, author: user.id });
         const result = await post.save();
         await result.populate("author").execPopulate();
@@ -83,7 +92,6 @@ export default {
             new: true,
           }
         );
-        console.log("poat", postO);
         if (!postO) {
           throw new Error("unable to edit post");
         }
