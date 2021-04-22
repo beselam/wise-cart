@@ -15,7 +15,7 @@ export default gql`
 
   input NewPost {
     title: String!
-    content: String!
+    description: String!
     category: String!
     featuredImage: [Upload]!
   }
@@ -23,7 +23,7 @@ export default gql`
   input postUpdate {
     id: ID!
     title: String
-    content: String
+    description: String
     category: String
     featuredImage: [String]
     createdAt: String
@@ -53,7 +53,7 @@ export default gql`
   type Post {
     id: ID
     title: String!
-    content: String!
+    description: String!
     category: String!
     featuredImage: [String]
     createdAt: String

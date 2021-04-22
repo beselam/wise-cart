@@ -3,7 +3,7 @@ import { createWriteStream, mkdir } from "fs";
 import shortid from "shortid";
 import { ApolloError } from "apollo-server-errors";
 import { NewPostRules } from "../../validators/postValidator.js";
-import { GraphQLUpload } from "apollo-server-express";
+
 const PostLabels = {
   docs: "posts",
   limit: "perPage",
@@ -67,12 +67,6 @@ export default {
     createNewPost: async (_, { newPost }, { user }) => {
       try {
         const { title, content, featuredImage } = await newPost;
-
-        /*     const files = await Promise.all(
-          featuredImage.map(async (image) => {
-            return await image;
-          })
-        ); */
         await NewPostRules.validate({ title, content }, { abortEarly: false });
         const files = await Promise.all(featuredImage.map(await storeUpload));
         console.log("ss", files);
