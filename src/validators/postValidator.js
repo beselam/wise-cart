@@ -2,17 +2,20 @@ import * as yup from "yup";
 
 const title = yup
   .string()
-  .required("Title of Blog is required.")
-  .min(1, "Title of the Blog should have at least 5 characters.")
-  .max(50, "Title of the Blog should have at most 50 characters.");
+  .required("Title is required.")
+  .min(1, "Title  should have at least 1 characters.")
+  .max(20, "Title  should have at most 50 characters.");
 
-const content = yup
+const price = yup.string().required("Price is required.");
+
+const description = yup
   .string()
-  .required("Content of the Blog is required.")
-  .min(1, "Content of the Blog should have at least 5 characters.")
-  .max(500, "Content of the Blog should have at most 3000 characters.");
+  .required("description is required.")
+  .min(1, "description should have at least 1 characters.")
+  .max(500, "description should have at most 500 characters.");
 
 export const NewPostRules = yup.object().shape({
   title,
-  content,
+  description,
+  price,
 });

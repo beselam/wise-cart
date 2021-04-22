@@ -22,7 +22,7 @@ const storeUpload = async (file) => {
   const id = shortid.generate();
   let path = `src/uploads/${id}-${filename}`;
   await stream.pipe(createWriteStream(path));
-  path = `http://localhost:7000/${path}`;
+  path = `http://10.69.1.56:7000/${path}`;
   return path;
 };
 
@@ -66,15 +66,18 @@ export default {
   Mutation: {
     createNewPost: async (_, { newPost }, { user }) => {
       try {
-        const { title, content, featuredImage } = await newPost;
-        await NewPostRules.validate({ title, content }, { abortEarly: false });
+        const { title, description, price, featuredImage } = await newPost;
+        await NewPostRules.validate(
+          { title, description, price },
+          { abortEarly: false }
+        );
         const files = await Promise.all(featuredImage.map(await storeUpload));
         console.log("ss", files);
         newPost.featuredImage = files;
         const post = new PostModel({ ...newPost, author: user.id });
         const result = await post.save();
-        await result.populate("author").execPopulate();
-        return result;
+        //await result.populate("author").execPopulate();
+        return true;
       } catch (e) {
         throw new ApolloError(e.message);
       }

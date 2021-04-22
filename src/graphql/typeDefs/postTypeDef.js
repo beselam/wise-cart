@@ -8,7 +8,7 @@ export default gql`
   }
 
   extend type Mutation {
-    createNewPost(newPost: NewPost!): Post!
+    createNewPost(newPost: NewPost!): Boolean!
     updatePost(post: postUpdate): Post! @isAuth
     deletePost(id: ID): DeleteNotification! @isAuth
   }
@@ -16,6 +16,7 @@ export default gql`
   input NewPost {
     title: String!
     description: String!
+    price: String!
     category: String!
     featuredImage: [Upload]!
   }
@@ -24,6 +25,7 @@ export default gql`
     id: ID!
     title: String
     description: String
+    price: String
     category: String
     featuredImage: [String]
     createdAt: String
@@ -55,6 +57,7 @@ export default gql`
     title: String!
     description: String!
     category: String!
+    price: String!
     featuredImage: [String]
     createdAt: String
     updatedAt: String
