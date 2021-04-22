@@ -16,7 +16,9 @@ const PostLabels = {
   totalPages: "totalPages",
 };
 
-const storeUpload = async ({ stream, filename, mimetype }) => {
+const storeUpload = async (file) => {
+  const { createReadStream, filename, mimetype } = await file;
+  const stream = await createReadStream();
   const id = shortid.generate();
   let path = `src/uploads/${id}-${filename}`;
   await stream.pipe(createWriteStream(path));
@@ -24,20 +26,20 @@ const storeUpload = async ({ stream, filename, mimetype }) => {
   return path;
 };
 
-const processUpload = async (upload) => {
+/* const processUpload = async (upload) => {
   const imageList = [];
-  for (image in upload) {
-    const { createReadStream, filename, mimetype } = await image;
+  await upload.forEach(async (element) => {
+    console.log(element.filename);
+    const { createReadStream, filename, mimetype } = await element;
     const stream = await createReadStream();
     const file = await storeUpload({ stream, filename, mimetype });
     imageList.push(file);
-  }
-
+  }); 
+  console.log("ssssss", imageList);
   return imageList;
-};
+};*/
 
 export default {
-  Upload: GraphQLUpload,
   Query: {
     getAllPosts: async (_, args, { isAuth }) => {
       console.log("dd", isAuth);
@@ -64,13 +66,17 @@ export default {
   Mutation: {
     createNewPost: async (_, { newPost }, { user }) => {
       try {
-        const { title, content, featuredImage } = newPost;
-        console.log(newPost);
-        console.log(featuredImage);
+        const { title, content, featuredImage } = await newPost;
+
+        /*     const files = await Promise.all(
+          featuredImage.map(async (image) => {
+            return await image;
+          })
+        ); */
         await NewPostRules.validate({ title, content }, { abortEarly: false });
-        // const upload = await processUpload(featuredImage);
-        // newPost.featuredImage = upload;
-        newPost.featuredImage = "www.gooogle.com";
+        const files = await Promise.all(featuredImage.map(await storeUpload));
+        console.log("ss", files);
+        newPost.featuredImage = files;
         const post = new PostModel({ ...newPost, author: user.id });
         const result = await post.save();
         await result.populate("author").execPopulate();

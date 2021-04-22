@@ -50,6 +50,7 @@ const AuthMiddleware = async (req, res, next) => {
   authUser = await serializeUser(authUser);
 
   req.user = authUser;
+
   return next();
 };
 

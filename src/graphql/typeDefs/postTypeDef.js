@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-express";
+import { gql, GraphQLUpload } from "apollo-server-express";
 
 export default gql`
   extend type Query {
@@ -17,7 +17,7 @@ export default gql`
     title: String!
     content: String!
     category: String!
-    featuredImage: Upload
+    featuredImage: [Upload]!
   }
 
   input postUpdate {
