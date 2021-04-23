@@ -48,8 +48,6 @@ export default {
     },
     getUserPosts: async (_, args, { user }) => {
       try {
-        let mm = new mongoose.Types.ObjectId(user.id);
-        console.log(mm);
         let posts = await PostModel.find({ author: user.id });
         console.log(posts);
         return posts;
