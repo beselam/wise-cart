@@ -12,7 +12,8 @@ const UserSchema = new mongoose.Schema(
     },
     avatarImage: {
       type: String,
-      default: "https://cdn.shortpixel.ai",
+      default:
+        "https://www.foodwest.fi/wp-content/uploads/2016/11/blank-profile-picture-973460_1280.png",
     },
     password: {
       type: String,

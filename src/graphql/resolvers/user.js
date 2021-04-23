@@ -21,6 +21,7 @@ export default {
         username: user.username,
         id: user.id,
         email: user.email,
+        avatarImage: user.avatarImage,
       };
     },
     loginUser: async (_, { email, password }) => {

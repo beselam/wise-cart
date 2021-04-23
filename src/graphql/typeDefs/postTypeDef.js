@@ -5,12 +5,13 @@ export default gql`
     getAllPosts: [Post]
     getPostByPageAndLimit(page: Int, limit: Int): PostPaginator!
     getAuthenticatedUserPost(page: Int, limit: Int): PostPaginator!
+    getUserPosts: [Post] @isAuth
   }
 
   extend type Mutation {
     createNewPost(newPost: NewPost!): Boolean!
     updatePost(post: postUpdate): Post! @isAuth
-    deletePost(id: ID): DeleteNotification! @isAuth
+    deletePost(id: ID!): DeleteNotification! @isAuth
   }
 
   input NewPost {

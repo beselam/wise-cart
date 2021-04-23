@@ -3,7 +3,7 @@ import { createWriteStream, mkdir } from "fs";
 import shortid from "shortid";
 import { ApolloError } from "apollo-server-errors";
 import { NewPostRules } from "../../validators/postValidator.js";
-
+import mongoose from "mongoose";
 const PostLabels = {
   docs: "posts",
   limit: "perPage",
@@ -43,23 +43,38 @@ export default {
   Query: {
     getAllPosts: async (_, args, { isAuth }) => {
       console.log("dd", isAuth);
-      const posts = await PostModel.find();
+      let posts = await PostModel.find().populate("author", { password: 0 });
       return posts;
     },
+    getUserPosts: async (_, args, { user }) => {
+      try {
+        let mm = new mongoose.Types.ObjectId(user.id);
+        console.log(mm);
+        let posts = await PostModel.find({ author: user.id });
+        console.log(posts);
+        return posts;
+      } catch (e) {
+        throw new ApolloError(e.message);
+      }
+    },
     getPostByPageAndLimit: async (_, { page, limit }) => {
-      const options = {
-        page: page || 1,
-        limit: limit || 10,
-        sort: {
-          createdAt: -1,
-        },
-        populate: "author",
-        customLabels: PostLabels,
-      };
+      try {
+        const options = {
+          page: page || 1,
+          limit: limit || 10,
+          sort: {
+            createdAt: -1,
+          },
+          populate: "author",
+          customLabels: PostLabels,
+        };
 
-      let post = await PostModel.paginate({}, options);
-      console.log(post);
-      return post;
+        let post = await PostModel.paginate({}, options);
+        console.log(post);
+        return post;
+      } catch (e) {
+        throw new ApolloError(e.message);
+      }
     },
   },
 
