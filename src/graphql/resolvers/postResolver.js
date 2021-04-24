@@ -3,6 +3,7 @@ import { createWriteStream, mkdir } from "fs";
 import shortid from "shortid";
 import { ApolloError } from "apollo-server-errors";
 import { NewPostRules } from "../../validators/postValidator.js";
+import { PubSub } from "graphql-subscriptions";
 import mongoose from "mongoose";
 const PostLabels = {
   docs: "posts",
@@ -26,29 +27,32 @@ const storeUpload = async (file) => {
   return path;
 };
 
-/* const processUpload = async (upload) => {
-  const imageList = [];
-  await upload.forEach(async (element) => {
-    console.log(element.filename);
-    const { createReadStream, filename, mimetype } = await element;
-    const stream = await createReadStream();
-    const file = await storeUpload({ stream, filename, mimetype });
-    imageList.push(file);
-  }); 
-  console.log("ssssss", imageList);
-  return imageList;
-};*/
-
+const NEW_USER = "NEW_USER";
+const pubsub = new PubSub();
 export default {
   Query: {
-    getAllPosts: async (_, args, { isAuth }) => {
-      console.log("dd", isAuth);
+    getAllPosts: async (_, args) => {
       let posts = await PostModel.find().populate("author", { password: 0 });
+
+      pubsub.publish(NEW_USER, { newUser: posts[0] });
+
       return posts;
     },
     getUserPosts: async (_, args, { user }) => {
       try {
         let posts = await PostModel.find({ author: user.id });
+        console.log(posts);
+        return posts;
+      } catch (e) {
+        throw new ApolloError(e.message);
+      }
+    },
+    getPostByCategory: async (_, { category }) => {
+      try {
+        console.log("ww", category);
+        let posts = await PostModel.find({ category: category }).populate(
+          "author"
+        );
         console.log(posts);
         return posts;
       } catch (e) {
@@ -133,6 +137,14 @@ export default {
       } catch (e) {
         throw new ApolloError(e.message);
       }
+    },
+  },
+
+  Subscription: {
+    newUser: {
+      subscribe: () => {
+        return pubsub.asyncIterator(NEW_USER);
+      },
     },
   },
 };

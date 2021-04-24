@@ -6,6 +6,7 @@ export default gql`
     getPostByPageAndLimit(page: Int, limit: Int): PostPaginator!
     getAuthenticatedUserPost(page: Int, limit: Int): PostPaginator!
     getUserPosts: [Post] @isAuth
+    getPostByCategory(category: String!): [Post]
   }
 
   extend type Mutation {
@@ -63,5 +64,9 @@ export default gql`
     createdAt: String
     updatedAt: String
     author: User!
+  }
+
+  type Subscription {
+    newUser: Post!
   }
 `;
