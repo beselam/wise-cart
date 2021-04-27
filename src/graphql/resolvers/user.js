@@ -18,14 +18,13 @@ export default {
     },
     authUserProfile: async (_, args, { user }) => {
       return {
-        username: user.username,
-        id: user.id,
+        name: user.name,
+        _id: user._id,
         email: user.email,
-        avatarImage: user.avatarImage,
+        avatar: user.avatar,
       };
     },
     loginUser: async (_, { email, password }) => {
-      console.log("hhhhh");
       try {
         await UserAuthenticationRules.validate(
           { email, password },
@@ -40,7 +39,7 @@ export default {
           throw new Error("Invalid user");
         }
         user = user.toObject();
-        user.id = user._id;
+
         user = await serializeUser(user);
 
         let token = await issueAuthToken(user);
@@ -57,14 +56,14 @@ export default {
   Mutation: {
     registerUser: async (_, { newUser }) => {
       try {
-        let { email, username, password } = newUser;
+        let { email, name, password } = newUser;
         console.log(newUser);
         await UserRegistrationRules.validate(
-          { username, password, email },
+          { name, password, email },
           { abortEarly: false }
         );
 
-        let user = await User.findOne({ username });
+        let user = await User.findOne({ name });
 
         if (user) {
           throw new Error("Username is already taken.", "403");
@@ -81,8 +80,6 @@ export default {
         let result = await user.save();
 
         result = result.toObject();
-
-        result.id = result._id;
 
         result = serializeUser(result);
 

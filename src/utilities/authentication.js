@@ -13,4 +13,4 @@ export const issueAuthToken = async (jwtPayload) => {
 };
 
 export const serializeUser = (user) =>
-  lodash.pick(user, ["id", "email", "username", "avatarImage"]);
+  lodash.pick(user, ["_id", "email", "name", "avatar"]);

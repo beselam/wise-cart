@@ -3,8 +3,7 @@ import { createWriteStream, mkdir } from "fs";
 import shortid from "shortid";
 import { ApolloError } from "apollo-server-errors";
 import { NewPostRules } from "../../validators/postValidator.js";
-import { PubSub } from "graphql-subscriptions";
-import mongoose from "mongoose";
+
 const PostLabels = {
   docs: "posts",
   limit: "perPage",
@@ -28,19 +27,17 @@ const storeUpload = async (file) => {
 };
 
 const NEW_USER = "NEW_USER";
-const pubsub = new PubSub();
+//const pubsub = new PubSub();
 export default {
   Query: {
-    getAllPosts: async (_, args) => {
+    getAllPosts: async (_, args, { pubsub }) => {
       let posts = await PostModel.find().populate("author", { password: 0 });
-
-      pubsub.publish(NEW_USER, { newUser: posts[0] });
 
       return posts;
     },
     getUserPosts: async (_, args, { user }) => {
       try {
-        let posts = await PostModel.find({ author: user.id });
+        let posts = await PostModel.find({ author: user._id });
         console.log(posts);
         return posts;
       } catch (e) {
@@ -91,7 +88,7 @@ export default {
         const files = await Promise.all(featuredImage.map(await storeUpload));
         console.log("ss", files);
         newPost.featuredImage = files;
-        const post = new PostModel({ ...newPost, author: user.id });
+        const post = new PostModel({ ...newPost, author: user._id });
         const result = await post.save();
         //await result.populate("author").execPopulate();
         return true;
@@ -103,10 +100,9 @@ export default {
     updatePost: async (_, args, { user }) => {
       try {
         const { post } = args;
-        console.log(post);
-        console.log("uu", user.id.toString());
+
         const postO = await PostModel.findOneAndUpdate(
-          { _id: post.id, author: user.id.toString() },
+          { _id: post.id, author: user._id.toString() },
           { ...post },
           {
             new: true,
@@ -125,7 +121,7 @@ export default {
       try {
         const deletedPost = await PostModel.findOneAndDelete({
           _id: id,
-          author: user.id.toString(),
+          author: user._id.toString(),
         });
         if (!deletedPost) {
           throw new Error("unable delete post");
@@ -142,7 +138,7 @@ export default {
 
   Subscription: {
     newUser: {
-      subscribe: () => {
+      subscribe: (_, args, { pubsub }) => {
         return pubsub.asyncIterator(NEW_USER);
       },
     },

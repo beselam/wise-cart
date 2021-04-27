@@ -1,5 +1,7 @@
-import postTypeDef from "./postTypeDef.js";
+import postTypeDef from "./post.js";
 import imageTypeDef from "./imageTypeDef.js";
+import messageTypeDef from "./message.js";
+import roomTypeDef from "./room.js";
 import user from "./user.js";
 import { gql } from "apollo-server-express";
 
@@ -13,4 +15,11 @@ const linkSchema = gql`
   }
 `;
 
-export default [linkSchema, postTypeDef, imageTypeDef, user];
+export default [
+  linkSchema,
+  postTypeDef,
+  imageTypeDef,
+  user,
+  messageTypeDef,
+  roomTypeDef,
+];

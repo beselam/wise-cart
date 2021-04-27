@@ -5,7 +5,7 @@ import typeDefs from "./graphql/typeDefs/index.js";
 import resolvers from "./graphql/resolvers/index.js";
 import AuthMiddleware from "./middleware/auth.js";
 import { schemaDirectives } from "./graphql/directives/index.js";
-
+import { PubSub } from "graphql-subscriptions";
 import { createServer } from "http";
 
 (async () => {
@@ -18,18 +18,27 @@ import { createServer } from "http";
 
     app.use(express.json());
     app.use(AuthMiddleware);
-
+    const pubsub = new PubSub();
     app.use("/src/uploads", express.static("./src/uploads"));
     const server = new ApolloServer({
       typeDefs,
       resolvers,
       schemaDirectives,
-
+      subscriptions: {
+        path: "/subscriptions",
+        onConnect: (connectionParams, webSocket, context) => {
+          console.log("Connected!");
+        },
+        onDisconnect: (webSocket, context) => {
+          console.log("Disconnected!");
+        },
+      },
       context: ({ req, connection }) => {
         if (connection) {
           console.log("conn");
           return {
             connection,
+            pubsub,
           };
         }
         let { isAuth, user } = req;
@@ -38,6 +47,7 @@ import { createServer } from "http";
           req,
           isAuth,
           user,
+          pubsub,
         };
       },
     });

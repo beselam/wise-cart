@@ -11,16 +11,16 @@ export default gql`
     registerUser(newUser: UserInput!): AuthResponse!
   }
   input UserInput {
-    username: String!
+    name: String!
     email: String!
     password: String!
-    avatarImage: Upload
+    avatar: Upload
   }
   type User {
-    id: ID!
-    username: String!
+    _id: ID!
+    name: String!
     email: String!
-    avatarImage: String!
+    avatar: String!
   }
 
   type AuthResponse {

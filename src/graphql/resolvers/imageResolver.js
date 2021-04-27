@@ -29,19 +29,4 @@ export default {
   },
 };
 
-/* let url = "https://localjost:7000";
-      let { filename, createReadStream } = await file;
-      const stream = createReadStream();
-      let { ext, name } = path.parse(filename);
-      name = name.replace(/([^a-z0-9 ]+)/gi, "_").replace(" ", "_");
-      console.log("name", name);
-      const __dirname = path.dirname(new URL(import.meta.url).pathname);
-      let serverFile = path.join(__dirname, `../../uploads/${name}${ext}`);
-      console.log("serverbefore", serverFile);
-      let writeStream = await createWriteStream(serverFile);
-      await stream.pipe(writeStream);
-      serverFile = `${url}${serverFile.split("uploads")[1]}`;
-      console.log("serverF", serverFile);
-      return {
-        url: serverFile,
-      }; */
+

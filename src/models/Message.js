@@ -1,21 +1,26 @@
 import mongoose from "mongoose";
 const PostSchema = new mongoose.Schema(
   {
+    roomId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "room",
+    },
     postId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "post",
-    }
-    to: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "post",
     },
-    from: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
     },
-    content: {
+    receiver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+
+    text: {
       type: String,
-      required: true
+      required: true,
     },
   },
   {

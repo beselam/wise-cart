@@ -40,7 +40,7 @@ const AuthMiddleware = async (req, res, next) => {
   }
 
   // If the user has valid token then Find the user by decoded token's id
-  let authUser = await User.findById(decodedToken.id);
+  let authUser = await User.findById(decodedToken._id);
 
   if (!authUser) {
     req.isAuth = false;

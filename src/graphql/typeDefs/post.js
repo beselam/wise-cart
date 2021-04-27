@@ -68,5 +68,7 @@ export default gql`
 
   type Subscription {
     newUser: Post!
+    newSubscriptionMessage(roomId: ID, postId: ID): Message!
   }
 `;
+// newSubscriptionMessage(roomId: ID, postId: ID): Message!
