@@ -9,6 +9,7 @@ export default {
   Query: {
     message: async (_, { id }) => {
       try {
+        console.log(id);
         const message = await Message.find({ roomId: id })
           .populate("user")
           .populate("receiver")
