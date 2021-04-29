@@ -25,6 +25,10 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    location: {
+      type: { type: String, default: "Point" },
+      coordinates: { type: [Number], index: "2dsphere" },
+    },
   },
   {
     timestamps: true,

@@ -7,6 +7,7 @@ export default gql`
     getAuthenticatedUserPost(page: Int, limit: Int): PostPaginator!
     getUserPosts: [Post] @isAuth
     getPostByCategory(category: String!): [Post]
+    getPostByLocation(long: Float!, lat: Float!, maxDistance: Int!): [Post]
   }
 
   extend type Mutation {
@@ -21,6 +22,12 @@ export default gql`
     price: String!
     category: String!
     featuredImage: [Upload]!
+    location: LocData
+  }
+
+  input LocData {
+    type: String = "Point"
+    coordinates: [Float]
   }
 
   input postUpdate {
@@ -64,6 +71,11 @@ export default gql`
     createdAt: String
     updatedAt: String
     author: User!
+    location: Detail
+  }
+  type Detail {
+    type: String
+    coordinates: [Float]
   }
 
   type Subscription {

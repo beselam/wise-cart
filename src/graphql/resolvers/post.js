@@ -22,7 +22,7 @@ const storeUpload = async (file) => {
   const id = shortid.generate();
   let path = `src/uploads/${id}-${filename}`;
   await stream.pipe(createWriteStream(path));
-  path = `http://10.69.1.56:7000/${path}`;
+  path = `http://192.168.1.104:7000/${path}`;
   return path;
 };
 
@@ -31,6 +31,7 @@ const NEW_USER = "NEW_USER";
 export default {
   Query: {
     getAllPosts: async (_, args, { pubsub }) => {
+      console.log("sssssssss");
       let posts = await PostModel.find().populate("author", { password: 0 });
 
       return posts;
@@ -50,6 +51,22 @@ export default {
         let posts = await PostModel.find({ category: category }).populate(
           "author"
         );
+        console.log(posts);
+        return posts;
+      } catch (e) {
+        throw new ApolloError(e.message);
+      }
+    },
+    getPostByLocation: async (_, { long, lat, maxDistance }) => {
+      try {
+        let posts = await PostModel.find({
+          location: {
+            $near: {
+              $maxDistance: maxDistance,
+              $geometry: { type: "Point", coordinates: [long, lat] },
+            },
+          },
+        }).populate("author");
         console.log(posts);
         return posts;
       } catch (e) {
