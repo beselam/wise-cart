@@ -59,6 +59,7 @@ export default {
     },
     getPostByLocation: async (_, { long, lat, maxDistance }) => {
       try {
+        console.log("here");
         let posts = await PostModel.find({
           location: {
             $near: {
@@ -67,7 +68,7 @@ export default {
             },
           },
         }).populate("author");
-        console.log(posts);
+
         return posts;
       } catch (e) {
         throw new ApolloError(e.message);

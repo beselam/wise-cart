@@ -9,6 +9,7 @@ export default gql`
 
   extend type Mutation {
     registerUser(newUser: UserInput!): AuthResponse!
+    updateProfilePic(picture: Upload!): User! @isAuth
   }
   input UserInput {
     name: String!

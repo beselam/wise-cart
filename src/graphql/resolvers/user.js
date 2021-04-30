@@ -10,6 +10,19 @@ import {
   UserRegistrationRules,
 } from "../../validators/userValidation.js";
 
+import { createWriteStream, mkdir } from "fs";
+import shortid from "shortid";
+
+const storeUpload = async (file) => {
+  const { createReadStream, filename, mimetype } = await file;
+  const stream = await createReadStream();
+  const id = shortid.generate();
+  let path = `src/uploads/${id}-${filename}`;
+  await stream.pipe(createWriteStream(path));
+  path = `http://10.69.1.10:7000/${path}`;
+  return path;
+};
+
 export default {
   Query: {
     getUsers: async () => {
@@ -89,6 +102,22 @@ export default {
           token,
           user: result,
         };
+      } catch (e) {
+        throw new ApolloError(e.message);
+      }
+    },
+
+    updateProfilePic: async (_, { picture }, { user }) => {
+      try {
+        const file = await storeUpload(picture);
+        const pic = await User.findOneAndUpdate(
+          { _id: user._id },
+          { avatar: file },
+          {
+            new: true,
+          }
+        );
+        return pic;
       } catch (e) {
         throw new ApolloError(e.message);
       }
