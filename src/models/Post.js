@@ -1,3 +1,4 @@
+"use-strict";
 import mongoose from "mongoose";
 import paginator from "mongoose-paginate-v2";
 const PostSchema = new mongoose.Schema(

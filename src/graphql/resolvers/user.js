@@ -1,3 +1,4 @@
+"use-strict";
 import { ApolloError } from "apollo-server-errors";
 import User from "../../models/User.js";
 import bcrypt from "bcryptjs";
@@ -12,14 +13,16 @@ import {
 
 import { createWriteStream, mkdir } from "fs";
 import shortid from "shortid";
+import { PORT, URL } from "../../config/index.js";
 
+// create Readstream and path and store the image file
 const storeUpload = async (file) => {
   const { createReadStream, filename, mimetype } = await file;
   const stream = await createReadStream();
   const id = shortid.generate();
   let path = `src/uploads/${id}-${filename}`;
   await stream.pipe(createWriteStream(path));
-  path = `http://10.69.1.10:7000/${path}`;
+  path = `${URL}:${PORT}/${path}`;
   return path;
 };
 

@@ -2,18 +2,19 @@ import { gql, GraphQLUpload } from "apollo-server-express";
 
 export default gql`
   extend type Query {
-    getAllPosts: [Post]
-    getPostByPageAndLimit(page: Int, limit: Int): PostPaginator!
-    getAuthenticatedUserPost(page: Int, limit: Int): PostPaginator!
+    getAllPosts: [Post] @isAuth
+    getPostByPageAndLimit(page: Int, limit: Int): PostPaginator! @isAuth
+    getAuthenticatedUserPost(page: Int, limit: Int): PostPaginator! @isAuth
     getUserPosts: [Post] @isAuth
-    getPostByCategory(category: String!): [Post]
+    getPostByCategory(category: String!): [Post] @isAuth
     getPostByLocation(long: Float!, lat: Float!, maxDistance: Int!): [Post]
+      @isAuth
   }
 
   extend type Mutation {
-    createNewPost(newPost: NewPost!): Boolean!
+    createNewPost(newPost: NewPost!): Boolean! @isAuth
     updatePost(post: postUpdate): Post! @isAuth
-    deletePost(id: ID!): DeleteNotification! @isAuth
+    deletePost(id: ID!): Boolean! @isAuth
   }
 
   input NewPost {
@@ -39,11 +40,6 @@ export default gql`
     featuredImage: [String]
     createdAt: String
     updatedAt: String
-  }
-
-  type DeleteNotification {
-    id: ID!
-    success: Boolean
   }
 
   type PostPaginator {
@@ -79,7 +75,6 @@ export default gql`
   }
 
   type Subscription {
-    newUser: Post!
     newSubscriptionMessage(roomId: ID, postId: ID): Message!
   }
 `;

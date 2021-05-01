@@ -1,3 +1,4 @@
+"use-strict";
 import { ApolloError } from "apollo-server-errors";
 import Comment from "../../models/Comment.js";
 
@@ -7,7 +8,7 @@ export default {
       try {
         const comment = await Comment.find({
           postId: postId,
-        });
+        }).populate("user");
 
         return comment;
       } catch (e) {
@@ -25,6 +26,7 @@ export default {
           user: user._id,
         });
         const result = await comment.save();
+        await result.populate("user").execPopulate();
         return result;
       } catch (e) {
         throw new ApolloError(e.message);

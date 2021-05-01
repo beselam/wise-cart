@@ -1,5 +1,4 @@
 import postTypeDef from "./post.js";
-import imageTypeDef from "./imageTypeDef.js";
 import messageTypeDef from "./message.js";
 import roomTypeDef from "./room.js";
 import userTypeDef from "./user.js";
@@ -19,7 +18,7 @@ const linkSchema = gql`
 export default [
   linkSchema,
   postTypeDef,
-  imageTypeDef,
+
   userTypeDef,
   messageTypeDef,
   roomTypeDef,

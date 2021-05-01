@@ -1,8 +1,12 @@
+"use-strict";
 import { ApolloError } from "apollo-server-errors";
 import { withFilter } from "graphql-subscriptions";
 import Message from "../../models/Message.js";
 import Room from "../../models/Room.js";
-import message from "../typeDefs/message.js";
+
+/**
+ * message resolver
+ */
 
 const SUBSCRIBE_FOR_NEW_MESSAGE = "SUBSCRIBE_FOR_NEW_MESSAGE";
 export default {

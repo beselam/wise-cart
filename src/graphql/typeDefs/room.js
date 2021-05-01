@@ -2,12 +2,13 @@ import { gql } from "apollo-server-express";
 
 export default gql`
   extend type Query {
-    singleRoom(postId: ID!, usersId: [ID]!): Room
+    singleRoom(postId: ID!, usersId: [ID]!): Room @isAuth
     userRoomList: [UserRoom]! @isAuth
   }
 
   extend type Mutation {
-    createRoom(newRoom: NewRoom!): Room
+    createRoom(newRoom: NewRoom!): Room @isAuth
+    deleteRoom(roomId: ID!): Boolean! @isAuth
   }
 
   input NewRoom {

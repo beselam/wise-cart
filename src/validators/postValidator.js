@@ -1,5 +1,8 @@
+"use-strict";
 import * as yup from "yup";
-
+/**
+ * post MODEL Validation Rules
+ */
 const title = yup
   .string()
   .required("Title is required.")

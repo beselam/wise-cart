@@ -1,3 +1,4 @@
+"use-strict";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import connectMongo from "./db/db.js";
@@ -7,7 +8,9 @@ import AuthMiddleware from "./middleware/auth.js";
 import { schemaDirectives } from "./graphql/directives/index.js";
 import { PubSub } from "graphql-subscriptions";
 import { createServer } from "http";
-
+import { PORT } from "./config/index.js";
+import localhost from "./security/localhost.js";
+import production from "./security/production.js";
 (async () => {
   try {
     const connect = await connectMongo();
@@ -57,11 +60,17 @@ import { createServer } from "http";
 
     server.installSubscriptionHandlers(ws);
 
-    ws.listen({ port: 7000 }, () =>
+    /* ws.listen({ port: PORT }, () =>
       console.log(
-        `🚀 Server ready at http://localhost:7000${server.graphqlPath}`
+        `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
       )
-    );
+    ); */
+    process.env.NODE_ENV = process.env.NODE_ENV || "development";
+    if (process.env.NODE_ENV === "production") {
+      production(ws, 7000);
+    } else {
+      localhost(ws, 7700, 7000);
+    }
   } catch (e) {
     console.log("server error: " + e.message);
   }

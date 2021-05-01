@@ -1,6 +1,11 @@
+"use-strict";
 import { defaultFieldResolver } from "graphql";
 
 import { ApolloError, SchemaDirectiveVisitor } from "apollo-server-express";
+
+/**
+ * custom graphql derivative to create a secured access to the models
+ */
 
 export class IsAuthDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field) {

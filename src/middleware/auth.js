@@ -1,3 +1,4 @@
+"use-strict";
 import { SECRET } from "../config/index.js";
 
 import User from "../models/User.js";

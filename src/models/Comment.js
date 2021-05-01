@@ -1,3 +1,4 @@
+"use-strict";
 import mongoose from "mongoose";
 const CommentSchema = new mongoose.Schema(
   {
@@ -5,7 +6,7 @@ const CommentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "post",
     },
-    users: [{ type: mongoose.Types.ObjectId, ref: "user" }],
+    user: { type: mongoose.Types.ObjectId, ref: "user", required: true },
     text: {
       type: String,
       required: true,

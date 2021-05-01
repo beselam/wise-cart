@@ -1,5 +1,7 @@
+"use-strict";
 import { ApolloError } from "apollo-server-errors";
 import Room from "../../models/Room.js";
+import Message from "../../models/Message.js";
 
 export default {
   Query: {
@@ -32,10 +34,23 @@ export default {
 
   Mutation: {
     createRoom: async (_, { newRoom }) => {
-      const room = new Room({ ...newRoom });
+      try {
+        const room = new Room({ ...newRoom });
 
-      const result = await room.save();
-      return result;
+        const result = await room.save();
+        return result;
+      } catch (e) {
+        throw new ApolloError(e.message);
+      }
+    },
+    deleteRoom: async (_, { roomId }) => {
+      try {
+        const result = await Room.deleteOne({ _id: roomId });
+        const messages = await Message.deleteMany({ roomId: roomId });
+        return true;
+      } catch (e) {
+        throw new ApolloError(e.message);
+      }
     },
   },
 };

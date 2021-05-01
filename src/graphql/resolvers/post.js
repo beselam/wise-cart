@@ -1,9 +1,18 @@
+"use-strict";
 import PostModel from "../../models/Post.js";
+import RoomModel from "../../models/Room.js";
+import MessageModel from "../../models/Message.js";
 import { createWriteStream, mkdir } from "fs";
 import shortid from "shortid";
 import { ApolloError } from "apollo-server-errors";
 import { NewPostRules } from "../../validators/postValidator.js";
+import { URL, PORT } from "../../config/index.js";
 
+/**
+ * post resolver
+ */
+
+// labels for pagination
 const PostLabels = {
   docs: "posts",
   limit: "perPage",
@@ -16,30 +25,33 @@ const PostLabels = {
   totalPages: "totalPages",
 };
 
+// create Readstream and path and store the image file
 const storeUpload = async (file) => {
   const { createReadStream, filename, mimetype } = await file;
   const stream = await createReadStream();
   const id = shortid.generate();
   let path = `src/uploads/${id}-${filename}`;
   await stream.pipe(createWriteStream(path));
-  path = `http://192.168.1.104:7000/${path}`;
+  path = `${URL}:${PORT}/${path}`;
   return path;
 };
 
 const NEW_USER = "NEW_USER";
-//const pubsub = new PubSub();
+
 export default {
   Query: {
     getAllPosts: async (_, args, { pubsub }) => {
-      console.log("sssssssss");
-      let posts = await PostModel.find().populate("author", { password: 0 });
+      let posts = await PostModel.find()
+        .populate("author", { password: 0 })
+        .sort({ createdAt: -1 });
 
       return posts;
     },
     getUserPosts: async (_, args, { user }) => {
       try {
-        let posts = await PostModel.find({ author: user._id });
-        console.log(posts);
+        let posts = await PostModel.find({ author: user._id }).sort({
+          createdAt: 1,
+        });
         return posts;
       } catch (e) {
         throw new ApolloError(e.message);
@@ -47,11 +59,9 @@ export default {
     },
     getPostByCategory: async (_, { category }) => {
       try {
-        console.log("ww", category);
-        let posts = await PostModel.find({ category: category }).populate(
-          "author"
-        );
-        console.log(posts);
+        let posts = await PostModel.find({ category: category })
+          .populate("author")
+          .sort({ createdAt: 1 });
         return posts;
       } catch (e) {
         throw new ApolloError(e.message);
@@ -59,7 +69,6 @@ export default {
     },
     getPostByLocation: async (_, { long, lat, maxDistance }) => {
       try {
-        console.log("here");
         let posts = await PostModel.find({
           location: {
             $near: {
@@ -67,7 +76,9 @@ export default {
               $geometry: { type: "Point", coordinates: [long, lat] },
             },
           },
-        }).populate("author");
+        })
+          .populate("author")
+          .sort({ createdAt: 1 });
 
         return posts;
       } catch (e) {
@@ -87,7 +98,7 @@ export default {
         };
 
         let post = await PostModel.paginate({}, options);
-        console.log(post);
+
         return post;
       } catch (e) {
         throw new ApolloError(e.message);
@@ -104,11 +115,11 @@ export default {
           { abortEarly: false }
         );
         const files = await Promise.all(featuredImage.map(await storeUpload));
-        console.log("ss", files);
+
         newPost.featuredImage = files;
         const post = new PostModel({ ...newPost, author: user._id });
         const result = await post.save();
-        //await result.populate("author").execPopulate();
+
         return true;
       } catch (e) {
         throw new ApolloError(e.message);
@@ -144,21 +155,13 @@ export default {
         if (!deletedPost) {
           throw new Error("unable delete post");
         }
-        return {
-          id: mm._id,
-          success: true,
-        };
+        await RoomModel.deleteMany({ postId: id });
+        await MessageModel.deleteMany({ postId: id });
+
+        return true;
       } catch (e) {
         throw new ApolloError(e.message);
       }
-    },
-  },
-
-  Subscription: {
-    newUser: {
-      subscribe: (_, args, { pubsub }) => {
-        return pubsub.asyncIterator(NEW_USER);
-      },
     },
   },
 };
