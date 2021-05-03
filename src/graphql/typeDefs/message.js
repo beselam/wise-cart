@@ -22,6 +22,5 @@ export default gql`
     user: User!
     receiver: User!
     text: String!
-    createdAt: String!
   }
 `;

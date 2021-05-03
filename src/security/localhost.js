@@ -11,12 +11,13 @@ const options = {
 };
 
 const httpsRedirect = (req, res) => {
-  res.writeHead(301, { Location: "ws://localhost:7700" + req.url });
+  res.writeHead(301, { Location: "https://localhost:8000" + req.url });
   res.end();
 };
 
-const localhost = (app, httpsPort, httpPort) => {
-  https.createServer(options, app).listen(httpsPort);
+const localhost = (app, httpsPort, httpPort, server) => {
+  const serverApp = https.createServer(options, app).listen(httpsPort);
   http.createServer(httpsRedirect).listen(httpPort);
+  server.installSubscriptionHandlers(serverApp);
 };
 export default localhost;

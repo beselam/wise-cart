@@ -4,9 +4,9 @@ const production = (app, port) => {
     if (res.secure) {
       next();
     } else {
-      res.redirect("ws://" + req.headers.host + req.url);
+      res.redirect("https://" + req.headers.host + req.url);
     }
   });
-  app.listen(7000);
+  app.listen(8800);
 };
 export default production;
