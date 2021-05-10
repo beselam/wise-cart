@@ -5,18 +5,11 @@ import { createUploadLink } from "apollo-upload-client";
 import { onError } from "@apollo/client/link/error";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
-import {
-  SubscriptionClient,
-  addGraphQLSubscriptions,
-} from "subscriptions-transport-ws";
 
-//10.69.1.56
-//192.168.1.104
-const URI = "https://my-cat-server.jelastic.metropolia.fi/graphQl";
+const URI = "https://my-cat-server.jelastic.metropolia.fi/graphql";
 const URI2 = "ws://my-cat-server.jelastic.metropolia.fi/subscriptions";
 const httpLink = new createUploadLink({
   uri: URI,
-  // Additional options
 });
 const wsLink = new WebSocketLink({
   uri: URI2,

@@ -1,4 +1,4 @@
-"use strick";
+"use strict";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import connectMongo from "./db/db.js";
@@ -60,18 +60,12 @@ import production from "./security/production.js";
 
     server.installSubscriptionHandlers(ws);
 
-    ws.listen({ port: 7000 }, () =>
-      console.log(
-        `🚀 Server ready at http://localhost:7000${server.graphqlPath}`
-      )
-    );
-
-    /* process.env.NODE_ENV = process.env.NODE_ENV || "development";
+     process.env.NODE_ENV = process.env.NODE_ENV || "development";
     if (process.env.NODE_ENV === "production") {
       production(app, 8800, server);
     } else {
       localhost(app, 8000, 8800, server);
-    } */
+    } 
   } catch (e) {
     console.log("server error: " + e.message);
   }
